@@ -1,34 +1,45 @@
 package com.synisys.test;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
 
-	/**
-	 * @param args
-	 * @throws SQLException 
-	 * @throws IOException 
-	 */
+	private static DBParameters mssql = new DBParameters(
+			"jdbc:jtds:sqlserver://sis2s027:1433;DatabaseName=cu_timor_test;selectmethod=Cursor",
+			"com/synisys/test/queries/mssql");
+	private static DBParameters h2Embedded = new DBParameters("jdbc:h2:mem:db1;MODE=MSSQLServer;DB_CLOSE_DELAY=-1;",
+			"com/synisys/test/queries/h2");
+	private static DBParameters h2ServerMode = new DBParameters(
+			"jdbc:h2:tcp://localhost/mem:db1;MODE=MSSQLServer;DB_CLOSE_DELAY=-1;", "com/synisys/test/queries/h2");
+
+	private static final int THREAD_COUNT = 100;
+	private static final int ROWS_COUNT = 100_000;//100_000;
+	private static final String DATABASE_USER = "sa";
+
+	private static final String DATABASE_PASSWORD = "sa";
+
 	public static void main(String[] args) throws Exception {
-		try(Connection connection = DriverManager.getConnection("jdbc:h2:tcp://localhost/mem:db1;MODE=MSSQLServer", "sa", "sa")){
-//			FileReader fileReader = new FileReader("d:/tmp/h2database-samples/import.txt");
-			
-			String queries = new String(Files.readAllBytes(Paths.get("d:/tmp/h2database-samples/import.txt")));
-			try(Statement statement = connection.createStatement()){
-				for(String query : queries.split("\r\nGO\r\n")){
-					statement.executeUpdate(query);
-				}	
-			}
-			
-			//Files.readAllLines(Paths.get("d:/tmp/h2database-samples/import.txt"), Charset.forName("ANSII"));
+		Class.forName("net.sourceforge.jtds.jdbc.Driver");
+		DBParameters dbParameters = h2Embedded;//
+		try (Connection connection = DriverManager.getConnection(dbParameters.getConnectionString(), DATABASE_USER,
+				DATABASE_PASSWORD)) {
+			new DatabaseCreator(dbParameters.getQueryPath()).createDatabase(connection, ROWS_COUNT);
 		}
+		ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
+		PerformanceLogger performanceLogger = new PerformanceLogger();
+		for (int i = 0; i < THREAD_COUNT; i++) {
+			executorService.execute(new SelectTask(String.valueOf(i), dbParameters.getConnectionString(),
+					DATABASE_USER, DATABASE_PASSWORD, performanceLogger));
+		}
+		executorService.shutdown();
+		executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		performanceLogger.printAll(System.out);
+		System.out.println("");
+		performanceLogger.printAggregatedStatistics(System.out);
 	}
 
 }
