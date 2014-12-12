@@ -20,7 +20,7 @@ public class PerformanceLogger {
 	}
 
 	private void printMeasure(PerformanceMeasure performanceMeasure, PrintStream writer) {
-		writer.print(String.format("%s (seconds):\t%1$,.1f\n", performanceMeasure.getName(),
+		writer.print(String.format("%s (seconds):\t%2$,.1f\n", performanceMeasure.getName(),
 				performanceMeasure.getDuration() / 1000.0));// seconds
 	}
 

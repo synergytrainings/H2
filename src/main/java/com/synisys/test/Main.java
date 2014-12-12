@@ -25,8 +25,9 @@ public class Main {
 	private static final String DATABASE_PASSWORD = "sa";
 
 	public static void main(String[] args) throws Exception {
+
 		Class.forName("net.sourceforge.jtds.jdbc.Driver");
-		DBParameters dbParameters = h2Embedded;//
+		DBParameters dbParameters = mssql;//
 		PerformanceLogger performanceLogger = new PerformanceLogger();
 
 		try (Connection connection = DriverManager.getConnection(dbParameters.getConnectionString(), DATABASE_USER,
@@ -44,6 +45,8 @@ public class Main {
 		performanceLogger.printAll(System.out);
 		System.out.println("");
 		performanceLogger.printAggregatedStatistics(System.out);
+		
+		System.out.println("Max running threads:" + SelectTask.getMaxConcurentTaskCount());
 	}
 
 }

@@ -17,17 +17,9 @@ public class SelectTask implements Runnable {
 	private String databasePassword;
 	private PerformanceLogger performanceLogger;
 
-	// public static final String H2_CONNECTION_STRING =
-	// "jdbc:h2:tcp://sis2w095/mem:db1;MODE=MSSQLServer;DB_CLOSE_DELAY=-1;TRACE_LEVEL_FILE=3;";
-	//
-	// public static final String MSSQL_CONNECTION_STRING =
-	// "jdbc:jtds:sqlserver://sis2s027:1433;DatabaseName=cu_timor;selectmethod=Cursor";
-	// public static final String QUERY1 =
-	// "SELECT top 1  min(View_IIs.CreatedUser) A2_II_CreatedUser ,  min(View_IIs.NameCode) A2_II_Name_IIs , isnull(View_IIs.II_IIs, '-1') II_IIs , 0 IREPORTBRANCHID, sum(1) as TempColumn FROM (SELECT View_IIs.*  , ApplicationStatusID AS II_ApplicationStatuses, BeneficiaryTypeID AS II_BeneficiaryTypes, DisabilityLevelID AS II_DisabilityLevels, DisabilityTypeID AS II_DisabilityTypes, IIID AS II_IIs, SocialAnimatorID AS II_SocialAnimators, StateProgramID AS II_StatePrograms  FROM View_IIs) View_IIs GROUP BY  View_IIs.II_IIs;";
-	// public static final String QUERY2 = "SELECT * from queryAnalyzer";
-	//
-	// public static final String DURATIONS_QUERY =
-	// "insert into queryAnalyzer (threadId, duration) values (?, ?)";
+	private static volatile int currentRunningTaskCount = 0;
+	private static volatile int maxRunningTaskCount = 0;
+	
 
 	public SelectTask(String id, String connectionString, String databaseUser,
 			String databasePassword, PerformanceLogger performanceLogger) {
@@ -42,7 +34,7 @@ public class SelectTask implements Runnable {
 	public void run() {
 		try (Connection connection = DriverManager.getConnection(
 				connectionString, databaseUser, databasePassword)) {
-
+			incrementCount();
 			String query = "";
 			try (InputStream inputStream = DatabaseCreator.class
 					.getClassLoader().getResourceAsStream(
@@ -78,6 +70,7 @@ public class SelectTask implements Runnable {
 			 */
 			// System.out.println(duration);
 			performanceLogger.add(id, duration);
+//			Thread.currentThread().sleep(10000);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -85,7 +78,25 @@ public class SelectTask implements Runnable {
 		catch (Throwable e) {
 			e.printStackTrace();
 		}
+		finally{
+			decrementCount();
+		}
 
+	}
+	
+	private static synchronized void incrementCount(){
+		currentRunningTaskCount++;
+		if(currentRunningTaskCount>maxRunningTaskCount){
+			maxRunningTaskCount = currentRunningTaskCount;
+		}
+	}
+	
+	private static synchronized void decrementCount(){
+		currentRunningTaskCount--;
+	}
+	
+	public static int getMaxConcurentTaskCount(){
+		return maxRunningTaskCount;
 	}
 
 }

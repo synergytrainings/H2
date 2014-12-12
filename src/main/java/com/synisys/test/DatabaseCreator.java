@@ -12,14 +12,18 @@ import org.apache.commons.io.IOUtils;
 public class DatabaseCreator {
 	private static final String DATA_STRING = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 	private String pathForQueries;
-	public DatabaseCreator(String pathForQueries) {
+	private PerformanceLogger performanceLogger;
+	public DatabaseCreator(String pathForQueries, PerformanceLogger performanceLogger) {
 		this.pathForQueries = pathForQueries;
+		this.performanceLogger = performanceLogger;
 	}
 
 	public void createDatabase(Connection connection, int rowsCount)
 			throws IOException, SQLException {
+		long startTime = System.currentTimeMillis();
 		createTable(connection);
 		initData(connection, rowsCount);
+		performanceLogger.addDatabaseCreation(System.currentTimeMillis()-startTime);
 	}
 
 	private void createTable(Connection connection) throws IOException,
