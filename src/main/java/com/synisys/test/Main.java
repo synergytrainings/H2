@@ -20,7 +20,7 @@ public class Main {
 			"jdbc:h2:tcp://localhost/mem:db1;MODE=MSSQLServer;DB_CLOSE_DELAY=-1;", "com/synisys/test/queries/h2");
 
 	private static final int THREAD_COUNT = 100;
-	private static final int ROWS_COUNT = 1000_000;//100_000;
+	private static final int ROWS_COUNT = 100_000;//100_000;
 	private static final String DATABASE_USER = "sa";
 
 	private static final String DATABASE_PASSWORD = "sa";
