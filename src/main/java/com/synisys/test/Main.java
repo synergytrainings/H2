@@ -29,10 +29,6 @@ public class Main {
 	private static final int THREAD_COUNT = 10;
 	private static final int ROWS_COUNT = 10_000;//100_000;
 
-	//private static final String DATABASE_USER = "sa";
-
-	//private static final String DATABASE_PASSWORD = "sa";
-
 	public static void main(String[] args) throws Exception {
 
 		Class.forName("net.sourceforge.jtds.jdbc.Driver");
