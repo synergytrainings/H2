@@ -82,6 +82,9 @@ public class SelectTask implements Runnable {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		catch (Throwable e) {
+			e.printStackTrace();
+		}
 
 	}
 

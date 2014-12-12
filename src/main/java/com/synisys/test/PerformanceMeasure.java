@@ -1,11 +1,11 @@
 package com.synisys.test;
 
 public class PerformanceMeasure {
-	private final String threadId;
+	private final String name;
 	private final long duration;
 
-	public PerformanceMeasure(String threadId, long duration) {
-		this.threadId = threadId;
+	public PerformanceMeasure(String name, long duration) {
+		this.name = name;
 		this.duration = duration;
 	}
 
@@ -13,7 +13,7 @@ public class PerformanceMeasure {
 		return duration;
 	}
 
-	public String getThreadId() {
-		return threadId;
+	public String getName() {
+		return name;
 	}
 }
