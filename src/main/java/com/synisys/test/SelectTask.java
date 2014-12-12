@@ -36,27 +36,31 @@ public class SelectTask implements Runnable {
 		try (Connection connection = DriverManager.getConnection(connectionString, databaseUser, databasePassword)) {
 			incrementCount();
 			try {
-				String query = "";
-				try (InputStream inputStream = DatabaseCreator.class.getClassLoader().getResourceAsStream(
-						queriesPath + "/query1.sql")) {
-					query = IOUtils.toString(inputStream, "Cp1252");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				// String query = QUERY1;
 				long startTime = System.currentTimeMillis();
-				try (Statement statement = connection.createStatement()) {
-					try (ResultSet resultset = statement.executeQuery(query)) {
-						int columnCount = resultset.getMetaData().getColumnCount();
-						while (resultset.next()) {
-							for (int i = 1; i <= columnCount; ++i) {
-								resultset.getObject(i);
+				for (int k = 0; k < 20; k++) {
+					String query = "";
+					try (InputStream inputStream = DatabaseCreator.class.getClassLoader().getResourceAsStream(
+							queriesPath + "/query1.sql")) {
+						query = IOUtils.toString(inputStream, "Cp1252");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					// String query = QUERY1;
+					
+					try (Statement statement = connection.createStatement()) {
+						try (ResultSet resultset = statement.executeQuery(query)) {
+							int columnCount = resultset.getMetaData().getColumnCount();
+							while (resultset.next()) {
+								for (int i = 1; i <= columnCount; ++i) {
+									resultset.getObject(i);
+								}
 							}
+
 						}
 
 					}
-
 				}
+				
 				long duration = System.currentTimeMillis() - startTime;
 
 				/*

@@ -26,8 +26,8 @@ public class Main {
 			"jdbc:h2:tcp://localhost/mem:db1;MODE=MSSQLServer;DB_CLOSE_DELAY=-1;", "com/synisys/test/queries/h2", "sa",
 			"sa");
 
-	private static final int THREAD_COUNT = 10;
-	private static final int ROWS_COUNT = 10_000;//100_000;
+	private static final int THREAD_COUNT = 100;
+	private static final int ROWS_COUNT = 100_000;//100_000;
 
 	//private static final String DATABASE_USER = "sa";
 
@@ -38,7 +38,7 @@ public class Main {
 		Class.forName("net.sourceforge.jtds.jdbc.Driver");
 		Class.forName("org.postgresql.Driver");
 
-		DBParameters dbParameters = postgre;//
+		DBParameters dbParameters = h2Embedded;//
 		PerformanceLogger performanceLogger = new PerformanceLogger();
 
 		try (Connection connection = DriverManager.getConnection(dbParameters.getConnectionString(),
@@ -57,7 +57,7 @@ public class Main {
 		System.out.println("");
 		performanceLogger.printAggregatedStatistics(System.out);
 
-		System.out.println("Max running threads:" + SelectTask.getMaxConcurentTaskCount());
+		System.out.println("Max running threads:\t" + SelectTask.getMaxConcurentTaskCount());
 	}
 
 }
