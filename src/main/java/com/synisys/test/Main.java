@@ -12,6 +12,7 @@ public class Main {
 	private static DBParameters mssql = new DBParameters(
 			"jdbc:jtds:sqlserver://sis2s027:1433;DatabaseName=cu_timor_test;selectmethod=Cursor",
 			"com/synisys/test/queries/mssql");
+	@SuppressWarnings("unused")
 	private static DBParameters h2Embedded = new DBParameters(
 			"jdbc:h2:mem:db1;MODE=MSSQLServer;DB_CLOSE_DELAY=-1;LOCK_MODE=0;LOG=0", "com/synisys/test/queries/h2");
 	@SuppressWarnings("unused")
@@ -19,7 +20,7 @@ public class Main {
 			"jdbc:h2:tcp://localhost/mem:db1;MODE=MSSQLServer;DB_CLOSE_DELAY=-1;", "com/synisys/test/queries/h2");
 
 	private static final int THREAD_COUNT = 100;
-	private static final int ROWS_COUNT = 100_000;//100_000;
+	private static final int ROWS_COUNT = 1000_000;//100_000;
 	private static final String DATABASE_USER = "sa";
 
 	private static final String DATABASE_PASSWORD = "sa";
@@ -27,7 +28,7 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 
 		Class.forName("net.sourceforge.jtds.jdbc.Driver");
-		DBParameters dbParameters = mssql;//
+		DBParameters dbParameters = h2Embedded;//
 		PerformanceLogger performanceLogger = new PerformanceLogger();
 
 		try (Connection connection = DriverManager.getConnection(dbParameters.getConnectionString(), DATABASE_USER,
