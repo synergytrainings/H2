@@ -6,11 +6,6 @@ public class DBParameters {
 	private String user;
 	private String password;
 
-	/*public DBParameters(String connectionString, String queryPath) {
-		this.connectionString = connectionString;
-		this.queryPath = queryPath;
-	}*/
-
 	public DBParameters(String connectionString, String queryPath, String user, String password) {
 		super();
 		this.connectionString = connectionString;

@@ -8,7 +8,7 @@ import java.util.List;
 public class PerformanceLogger {
 
 	private List<PerformanceMeasure> items = Collections.synchronizedList(new ArrayList<PerformanceMeasure>());
-
+	private long startTime = System.currentTimeMillis();
 	private PerformanceMeasure databaseCreation;
 
 	public void add(String threadId, long duration) {
@@ -47,6 +47,9 @@ public class PerformanceLogger {
 		writer.print(String.format("Min time (seconds):\t%1$,.1f\n", minTime / 1000.0));// seconds
 		writer.print(String.format("Max time (seconds):\t%1$,.2f\n", maxTime / 1000.0));// seconds
 		writer.print(String.format("Average time (seconds):\t%1$,.2f\n", avgTime / 1000.0));// seconds
+		
+		long overallDuration = System.currentTimeMillis() - startTime;
+		writer.print(String.format("Program execution time (seconds):\t%1$,.2f\n", overallDuration / 1000.0));// seconds
 	}
 
 	public void printAll(PrintStream writer) {

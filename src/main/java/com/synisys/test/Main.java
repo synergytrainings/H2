@@ -13,6 +13,7 @@ public class Main {
 			"jdbc:jtds:sqlserver://sis2s027:1433;DatabaseName=cu_timor_test;selectmethod=Cursor",
 			"com/synisys/test/queries/mssql", "sa", "sa");
 
+	@SuppressWarnings("unused")
 	private static DBParameters postgre = new DBParameters("jdbc:postgresql://localhost:5434/cu_timor",
 			"com/synisys/test/queries/postgre", "postgres", "root");
 
@@ -28,10 +29,6 @@ public class Main {
 
 	private static final int THREAD_COUNT = 100;
 	private static final int ROWS_COUNT = 100_000;//100_000;
-
-	//private static final String DATABASE_USER = "sa";
-
-	//private static final String DATABASE_PASSWORD = "sa";
 
 	public static void main(String[] args) throws Exception {
 
