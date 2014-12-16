@@ -2,17 +2,17 @@ package com.synisys.test.database;
 
 import java.util.Iterator;
 
+import com.synisys.test.database.metadata.TableColumn;
+
 public class IntRange extends AbstractRange<Integer> {
 
 	private int start;
 	private int end;
 
-	public IntRange(String columnName, int start, int end) {
+	public IntRange(TableColumn columnName, int start, int end) {
 		super(columnName);
 		this.start = start;
 		this.end = end;
-		ColumnValueInteger x=null;
-		ColumnValue<Integer> y = x;
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.synisys.test;
+package com.synisys.test.database;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,15 +11,10 @@ import java.util.Stack;
 
 import org.apache.commons.io.IOUtils;
 
-import com.synisys.test.database.ColumnValue;
-import com.synisys.test.database.ColumnValueDouble;
-import com.synisys.test.database.ColumnValueInteger;
-import com.synisys.test.database.ColumnValueString;
-import com.synisys.test.database.ColumnValueVisitor;
-import com.synisys.test.database.DataRange;
-import com.synisys.test.database.DoubleRange;
-import com.synisys.test.database.IntRange;
-import com.synisys.test.database.StringRange;
+import com.synisys.test.PerformanceLogger;
+import com.synisys.test.database.metadata.ColumnType;
+import com.synisys.test.database.metadata.Table;
+import com.synisys.test.database.metadata.TableColumn;
 
 public class DatabaseCreator {
 	private static final String DATA_STRING = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -37,9 +32,19 @@ public class DatabaseCreator {
 		initData(connection, rowsCount);
 		performanceLogger.addDatabaseCreation(System.currentTimeMillis() - startTime);
 
-		initFunctionalTableData("TableName", new IntRange("ProjectId", 10, 20), new IntRange("DonorId", 0, 3), new DoubleRange("CommitedAmount", 100.0, 200.0,
-				300.0), new StringRange("Comment", "Prefix", 1, 5));
-
+//		initTableData("View_IIs", new IntRange("IIID", 10, 20), new IntRange("IICount", 0, 3), new IntRange("PersonID", 5, 30),
+//				new IntRange("BeneficiaryTypeID", 5, 30), new IntRange("DisabilityTypeID", 5, 30), new IntRange("DisabilityLevelID", 0, 3), 
+//				new StringRange("Statusname_POR", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 10, 50),
+//				new StringRange("CreatedUser", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 20, 60),
+//				new StringRange("NameCode", "aaaaaaaaa", 20, 60));
+//
+//		
+		
+		
+		
+		
+		
+		
 	}
 
 	private void createTable(Connection connection) throws IOException, SQLException {
@@ -92,27 +97,35 @@ public class DatabaseCreator {
 		}
 	}
 
-	private void initFunctionalTableData(String tableName, DataRange<?>... columnRanges) throws SQLException {
-		String query = "";//generate query
-		PreparedStatement preparedStatement = null;//create statement
-		initFunctionalTableData(tableName, 0, new Stack<ColumnValue<?>>(), preparedStatement, columnRanges);
+	public void initTableData(Table table,Connection connection, DataRange<?>... columnRanges) throws SQLException {
+		StringBuilder query = new StringBuilder();//generate query
+		query.append("insert into ");
+		query.append(table.getName());
+		
+		PreparedStatement preparedStatement = connection.prepareStatement(query.toString());
+
+		initFunctionalTableData(0, new Stack<ColumnValue<?>>(), preparedStatement, columnRanges);
+	}
+	
+	private void initQuery() {
+		
 	}
 
-	private void initFunctionalTableData(String tableName, int columnIndex, Stack<ColumnValue<?>> columnValues, PreparedStatement preparedStatement,
+	private void initFunctionalTableData(int currentColumnIndex, Stack<ColumnValue<?>> columnValues, PreparedStatement preparedStatement,
 			DataRange<?>... columnRanges) throws SQLException {
-		if (columnIndex == columnRanges.length) {
-			insertRow(tableName, preparedStatement, columnValues);
+		if (currentColumnIndex == columnRanges.length) {
+			insertRow(preparedStatement, columnValues);
 		}
 		else {
-			for (ColumnValue<?> columnValue : columnRanges[columnIndex]) {
+			for (ColumnValue<?> columnValue : columnRanges[currentColumnIndex]) {
 				columnValues.push(columnValue);
-				initFunctionalTableData(tableName, columnIndex + 1, columnValues, preparedStatement, columnRanges);
+				initFunctionalTableData(currentColumnIndex + 1, columnValues, preparedStatement, columnRanges);
 				columnValues.pop();
 			}
 		}
 	}
 
-	private void insertRow(String tableName, final PreparedStatement preparedStatement, Stack<ColumnValue<?>> columnValues) throws SQLException {
+	private void insertRow(final PreparedStatement preparedStatement, Stack<ColumnValue<?>> columnValues) throws SQLException {
 		
 		//values
 		final int []i=new int[]{0}; 
@@ -121,13 +134,21 @@ public class DatabaseCreator {
 			
 			@Override
 			public void visit(ColumnValueString columnValue) {
-				// TODO Auto-generated method stub
+				try {
+					preparedStatement.setString(i[0], columnValue.getColumnValue());
+				} catch (SQLException e) {
+					throw new RuntimeException(e);
+				}
 				
 			}
 			
 			@Override
 			public void visit(ColumnValueDouble columnValue) {
-				// TODO Auto-generated method stub
+				try {
+					preparedStatement.setDouble(i[0], columnValue.getColumnValue());
+				} catch (SQLException e) {
+					throw new RuntimeException(e);
+				}
 				
 			}
 			
@@ -147,6 +168,13 @@ public class DatabaseCreator {
 			
 			i[0]++;
 		}
+		
+		
+	}
+
+	public void build(Table ...tables) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -1,14 +1,16 @@
 package com.synisys.test.database;
 
-public abstract class AbstractRange<T> implements DataRange<T> {
-	private String columnName;
+import com.synisys.test.database.metadata.TableColumn;
 
-	public AbstractRange(String columnName) {
-		this.columnName = columnName;
+public abstract class AbstractRange<T> implements DataRange<T> {
+	private TableColumn tableColumn;
+
+	public AbstractRange(TableColumn columnName) {
+		this.tableColumn = columnName;
 	}
 
 	@Override
 	public String getColumnName() {
-		return columnName;
+		return tableColumn.getColumnName();
 	}
 }

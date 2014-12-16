@@ -10,6 +10,8 @@ import java.sql.Statement;
 
 import org.apache.commons.io.IOUtils;
 
+import com.synisys.test.database.DatabaseCreator;
+
 public class SelectTask implements Runnable {
 	private String id;
 	private String connectionString;
