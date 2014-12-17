@@ -157,14 +157,14 @@ public abstract class DatabaseCreator {
 			throws SQLException {
 
 		//values
-		final int[] i = new int[] { 0 };
+		final int[] columnIndex = new int[] { 1 };
 
 		ColumnValueVisitor columnValueVisitor = new ColumnValueVisitor() {
 
 			@Override
 			public void visit(ColumnValueString columnValue) {
 				try {
-					preparedStatement.setString(i[0], columnValue.getColumnValue());
+					preparedStatement.setString(columnIndex[0], columnValue.getColumnValue());
 				} catch (SQLException e) {
 					throw new RuntimeException(e);
 				}
@@ -174,7 +174,7 @@ public abstract class DatabaseCreator {
 			@Override
 			public void visit(ColumnValueDouble columnValue) {
 				try {
-					preparedStatement.setDouble(i[0], columnValue.getColumnValue());
+					preparedStatement.setDouble(columnIndex[0], columnValue.getColumnValue());
 				} catch (SQLException e) {
 					throw new RuntimeException(e);
 				}
@@ -184,7 +184,7 @@ public abstract class DatabaseCreator {
 			@Override
 			public void visit(ColumnValueInteger columnValue) {
 				try {
-					preparedStatement.setInt(i[0], columnValue.getColumnValue());
+					preparedStatement.setInt(columnIndex[0], columnValue.getColumnValue());
 				} catch (SQLException e) {
 					throw new RuntimeException(e);
 				}
@@ -195,8 +195,9 @@ public abstract class DatabaseCreator {
 		for (ColumnValue<?> columnValue : columnValues) {
 			columnValue.accept(columnValueVisitor);
 
-			i[0]++;
+			columnIndex[0]++;
 		}
+		preparedStatement.executeUpdate();
 
 	}
 
@@ -235,5 +236,5 @@ public abstract class DatabaseCreator {
 	}
 	
 	public abstract void build(Connection connection, Table table) throws SQLException;
-
+	protected abstract String getDatabaseType(ColumnType columnType);
 }

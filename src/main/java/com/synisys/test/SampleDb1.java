@@ -19,15 +19,15 @@ public class SampleDb1 {
 		TableColumn projectName = projectTable.createColumn("Name", ColumnType.STRING1000);
 
 		Table sectorTable = Table.createTable("Sector");
-		TableColumn sectorId = projectTable.createPrimaryKeyColumn("SectorId", ColumnType.INT);
-		TableColumn sectorName = projectTable.createColumn("Name", ColumnType.STRING1000);
+		TableColumn sectorId = sectorTable.createPrimaryKeyColumn("SectorId", ColumnType.INT);
+		TableColumn sectorName = sectorTable.createColumn("Name", ColumnType.STRING1000);
 
 		Table projectSectorTable = Table.createTable("ProjectSector");
-		TableColumn projectSector_projectId = projectTable.createForeignKeyColumn("ProjectId", projectId);
-		TableColumn projectSector_sectorId = projectTable.createForeignKeyColumn("SectorId", sectorId);
-		TableColumn commitedAmount = projectTable.createColumn("commitedAmount", ColumnType.DECIMAL6_36);
+		TableColumn projectSector_projectId = projectSectorTable.createForeignKeyColumn("ProjectId", projectId);
+		TableColumn projectSector_sectorId = projectSectorTable.createForeignKeyColumn("SectorId", sectorId);
+		TableColumn commitedAmount = projectSectorTable.createColumn("commitedAmount", ColumnType.DECIMAL6_36);
 
-		databaseCreator.build(connection, projectTable, sectorTable, projectSectorTable);
+		//databaseCreator.build(connection, projectTable, sectorTable, projectSectorTable);
 
 		databaseCreator.initTableData(projectTable, connection, new IntRange(projectId, 1, 100), new StringRange(projectName,
 				"Project", 1, 100));

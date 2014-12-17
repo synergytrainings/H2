@@ -2,6 +2,7 @@ package com.synisys.test.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -64,12 +65,14 @@ public class H2DatabaseCreator extends DatabaseCreator {
 					})));
 
 		}
-
-		connection.createStatement().executeUpdate(query.toString());
-
+		query.append(")");
+		try(Statement statement = connection.createStatement()){
+			statement.executeUpdate(query.toString());
+		}
+		
 	}
 
-	private String getDatabaseType(ColumnType columnType) {
+	protected String getDatabaseType(ColumnType columnType) {
 		switch (columnType) {
 			case DECIMAL6_36:
 				return "decimal(36, 6)";

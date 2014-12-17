@@ -6,7 +6,6 @@ import com.synisys.test.database.metadata.TableColumn;
 
 public class StringRange extends AbstractRange<String> {
 
-	private String[] values;
 	private int index;
 	private int start;
 	private int end;
@@ -27,18 +26,19 @@ public class StringRange extends AbstractRange<String> {
 
 			@Override
 			public boolean hasNext() {
-				return isFinished;
+				return !isFinished;
 			}
 
 			@Override
 			public ColumnValueString next() {
 				isFinished = true;
+				
+				ColumnValueString columnValueString =  new ColumnValueString(prefix + index);
 				index++;
 				if(index == end){
 					index = start;
 				}
-				String value = values[index];
-				return new ColumnValueString(prefix + value);
+				return columnValueString;
 			}
 
 			@Override

@@ -2,10 +2,12 @@ package com.synisys.test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.synisys.test.database.DBParameters;
 import com.synisys.test.database.DatabaseCreator;
 import com.synisys.test.database.H2DatabaseCreator;
 
@@ -34,16 +36,34 @@ public class Main {
 	private static final int ROWS_COUNT = 100_000;//100_000;
 
 	public static void main(String[] args) throws Exception {
-
+		Main main = new Main();
+		DBParameters dbParameters = h2ServerMode;//
+		PerformanceLogger performanceLogger = new PerformanceLogger();
+		DatabaseCreator databaseCreator = new H2DatabaseCreator(dbParameters.getQueryPath(), performanceLogger); 
+		main.init();
+		//main.test1(performanceLogger, dbParameters, databaseCreator);
+		main.test2(performanceLogger, dbParameters, databaseCreator);
+	}
+	private void test2(PerformanceLogger performanceLogger, DBParameters dbParameters, DatabaseCreator databaseCreator) throws SQLException{
+		SampleDb1 sampleDB1 = new SampleDb1();
+		try (Connection connection = DriverManager.getConnection(dbParameters.getConnectionString(),
+				dbParameters.getUser(), dbParameters.getPassword())) {
+			sampleDB1.build(databaseCreator, connection);
+		}
+		
+	
+	}
+	
+	private  void init() throws ClassNotFoundException{
 		Class.forName("net.sourceforge.jtds.jdbc.Driver");
 		Class.forName("org.postgresql.Driver");
-
-		DBParameters dbParameters = h2Embedded;//
-		PerformanceLogger performanceLogger = new PerformanceLogger();
+	}
+	
+	public void test1(PerformanceLogger performanceLogger, DBParameters dbParameters, DatabaseCreator databaseCreator) throws Exception {
 
 		try (Connection connection = DriverManager.getConnection(dbParameters.getConnectionString(),
 				dbParameters.getUser(), dbParameters.getPassword())) {
-			new H2DatabaseCreator(dbParameters.getQueryPath(), performanceLogger).createDatabase(connection, ROWS_COUNT);
+			 databaseCreator.createDatabase(connection, ROWS_COUNT);
 		}
 		ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
 

@@ -1,56 +1,58 @@
 package com.synisys.test.database.metadata;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Table {
 
-	private String name;
+	private String tableName;
 	private List<TableColumn> columns = new ArrayList<>();
 	private List<ForeignKeyColumn> foreignKeyColumns = new ArrayList<>();
 	private List<PrimaryKeyColumn> primaryKeyColumns = new ArrayList<>();
-
+	private Set<String> columnNames = new HashSet<>();
 	private Table(String name) {
-		this.name = name;
+		this.tableName = name;
 	}
 
 	public static Table createTable(String name) {
 		return new Table(name);
 	}
 
-	public TableColumn createPrimaryKeyColumn(String string, ColumnType i) {
-		PrimaryKeyColumn tableColumn = new PrimaryKeyColumn(this, name, ColumnType.INT);
-		columns.add(tableColumn);
+	public TableColumn createPrimaryKeyColumn(String name, ColumnType columnType) {
+		PrimaryKeyColumn tableColumn = new PrimaryKeyColumn(this, name, columnType);
+		addColumn(tableColumn);
 		primaryKeyColumns.add(tableColumn);
 		return tableColumn;
 	}
 
 	public TableColumn createColumn(String name, ColumnType columnType) {
 		TableColumn tableColumn = new TableColumn(this, name, columnType);
-		columns.add(tableColumn);
+		addColumn(tableColumn);
 		return tableColumn;
 	}
 
-	public TableColumn createForeignKeyColumn(String string, TableColumn referencedKey) {
-		ForeignKeyColumn tableColumn = new ForeignKeyColumn(this, name, ColumnType.INT, referencedKey);
-		columns.add(tableColumn);
+	public TableColumn createForeignKeyColumn(String name, TableColumn referencedKey) {
+		ForeignKeyColumn tableColumn = new ForeignKeyColumn(this, name, referencedKey.getColumnType(), referencedKey);
+		addColumn(tableColumn);
 		foreignKeyColumns.add(tableColumn);
 		return tableColumn;
 	}
 
 	public Object getName() {
-		return this.name;
+		return this.tableName;
 	}
 
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return tableName.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Table) {
-			return name.equals(((Table) obj).getName());
+			return tableName.equals(((Table) obj).getName());
 		}
 		else {
 			return false;
@@ -70,4 +72,11 @@ public class Table {
 		return this.columns;
 	}
 
+	private void addColumn(TableColumn tableColumn){
+		if(columnNames.contains(tableColumn.getColumnName())){
+			throw new IllegalArgumentException(String.format("Column with name %s already exists in table %s", tableColumn.getColumnName(), this.tableName));
+		}
+		columnNames.add(tableColumn.getColumnName());
+		columns.add(tableColumn);
+	}
 }

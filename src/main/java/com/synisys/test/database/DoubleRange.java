@@ -22,7 +22,7 @@ public class DoubleRange extends AbstractRange<Double> {
 
 			@Override
 			public boolean hasNext() {
-				return isFinished;
+				return !isFinished;
 			}
 
 			@Override

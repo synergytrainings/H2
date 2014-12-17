@@ -1,4 +1,4 @@
-package com.synisys.test;
+package com.synisys.test.database;
 
 public class DBParameters {
 	private String connectionString;
