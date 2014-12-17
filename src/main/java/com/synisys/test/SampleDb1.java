@@ -27,15 +27,23 @@ public class SampleDb1 {
 		TableColumn projectSector_sectorId = projectSectorTable.createForeignKeyColumn("SectorId", sectorId);
 		TableColumn commitedAmount = projectSectorTable.createColumn("commitedAmount", ColumnType.DECIMAL6_36);
 
-		//databaseCreator.build(connection, projectTable, sectorTable, projectSectorTable);
+		databaseCreator.build(connection, projectTable, sectorTable, projectSectorTable);
 
-		databaseCreator.initTableData(projectTable, connection, new IntRange(projectId, 1, 100), new StringRange(projectName,
+		databaseCreator.initTableData(projectTable, connection, new IntRange(projectId, 1, 1_000), new StringRange(projectName,
 				"Project", 1, 100));
-		databaseCreator.initTableData(sectorTable, connection, new IntRange(sectorId, 1, 100), new StringRange(sectorName,
+		databaseCreator.initTableData(sectorTable, connection, new IntRange(sectorId, 1, 1000), new StringRange(sectorName,
 				"Sector1", 1, 10));
 
-		databaseCreator.initTableData(projectSectorTable, connection, new IntRange(projectId, 1, 100), new IntRange(sectorId, 1, 10),
+		databaseCreator.initTableData(projectSectorTable, connection, new IntRange(projectId, 1, 1_000), new IntRange(sectorId, 1, 1000),
 				new DoubleRange(commitedAmount, 100.0, 200.0, 300.0, 400.0, 500.0));
+				
+				/**
+				
+				select sector.name, sum (commitedAmount)
+from projectsector  inner join project on project.projectid =projectsector.projectid 
+inner join sector on sector.sectorid = projectsector.sectorid 
+group by sector.name
+*/
 	}
 
 }
