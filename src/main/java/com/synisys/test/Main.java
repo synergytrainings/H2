@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import com.synisys.test.database.DatabaseCreator;
+import com.synisys.test.database.H2DatabaseCreator;
 
 public class Main {
 
@@ -42,7 +43,7 @@ public class Main {
 
 		try (Connection connection = DriverManager.getConnection(dbParameters.getConnectionString(),
 				dbParameters.getUser(), dbParameters.getPassword())) {
-			new DatabaseCreator(dbParameters.getQueryPath(), performanceLogger).createDatabase(connection, ROWS_COUNT);
+			new H2DatabaseCreator(dbParameters.getQueryPath(), performanceLogger).createDatabase(connection, ROWS_COUNT);
 		}
 		ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
 
